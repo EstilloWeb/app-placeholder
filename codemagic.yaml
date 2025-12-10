@@ -4,19 +4,20 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       groups:
-        - app_store_credentials     # Grupo criado no painel
+        - app_store_credentials   # coloque suas credenciais de API do App Store Connect aqui
     scripts:
-      - name: Preparar pasta
+      - name: Instalar Fastlane
         script: |
-          mkdir -p artifacts
-          echo "Coloque seu IPA manualmente em artifacts/"
+          gem install fastlane
+
+      - name: Fazer upload do IPA
+        script: |
+          echo "Iniciando upload para App Store Connect..."
+          fastlane deliver \
+            --api_key_path ./auth/key.json \
+            --ipa ./artifacts/app.ipa \
+            --skip_screenshots \
+            --skip_metadata \
+            --skip_app_version_update
     artifacts:
       - artifacts/*.ipa
-    publishing:
-      app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
-        key_id: $APP_STORE_CONNECT_KEY_ID
-        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
-        ipa_path: "artifacts/*.ipa"
-        submit_to_testflight: true
-        submit_to_app_store: false
