@@ -2,21 +2,19 @@ workflows:
   ios_publish_only:
     name: "iOS Publish Only"
     environment:
-      vars:
-        APP_STORE_CONNECT_ISSUER_ID: Envie_pelo_Dashboard
-        APP_STORE_CONNECT_KEY_IDENTIFIER: Envie_pelo_Dashboard
-      secure:
-        APP_STORE_CONNECT_PRIVATE_KEY: Envie_pelo_Dashboard
+      groups:
+        - app_store_credentials     # ← você cria esse grupo no painel
     scripts:
-      - name: Prepare artifacts directory
+      - name: Prepare artifacts
         script: |
-          echo "🔧 Preparing artifacts…"
+          echo "Preparing artifacts folder..."
           mkdir -p artifacts
-          # Se estiver enviando via upload manual, não precisa copiar nada aqui.
-          # Apenas garanta que seu .ipa esteja em ./artifacts antes de publicar.
+          # Coloque seu .ipa em ./artifacts antes de iniciar a build
     publishing:
       app_store_connect:
-        apple_id: "seu-email-apple@icloud.com"
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY   # carregado do grupo
+        key_id: $APP_STORE_CONNECT_KEY_ID
+        issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         ipa_path: "artifacts/*.ipa"
-        submit_to_app_store: false            # Enviar automaticamente para revisão? (opcional)
-        submit_to_testflight: true            # Publicar no TestFlight
+        submit_to_testflight: true
+        submit_to_app_store: false
