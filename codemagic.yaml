@@ -1,18 +1,20 @@
 workflows:
   ios_publish_only:
     name: "iOS Publish Only"
+    instance_type: mac_mini_m1
     environment:
       groups:
-        - app_store_credentials     # ← você cria esse grupo no painel
+        - app_store_credentials     # Grupo criado no painel
     scripts:
-      - name: Prepare artifacts
+      - name: Preparar pasta
         script: |
-          echo "Preparing artifacts folder..."
           mkdir -p artifacts
-          # Coloque seu .ipa em ./artifacts antes de iniciar a build
+          echo "Coloque seu IPA manualmente em artifacts/"
+    artifacts:
+      - artifacts/*.ipa
     publishing:
       app_store_connect:
-        api_key: $APP_STORE_CONNECT_PRIVATE_KEY   # carregado do grupo
+        api_key: $APP_STORE_CONNECT_PRIVATE_KEY
         key_id: $APP_STORE_CONNECT_KEY_ID
         issuer_id: $APP_STORE_CONNECT_ISSUER_ID
         ipa_path: "artifacts/*.ipa"
